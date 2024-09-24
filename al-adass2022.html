@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+</head>
+<body>
+
+<div id="aladin-lite-div" style="width: 1024px; height: 768px"></div>
+<script src='https://aladin.cds.unistra.fr/AladinLite/api/v3/beta/aladin.js' charset='utf-8'></script>
+
+
+<script type="module">
+    let aladin;
+    A.init.then(() => {
+        aladin = A.aladin('#aladin-lite-div', {showSettingsControl: true,  fullScreen: true, survey: "P/PanSTARRS/DR1/color-z-zg-g", showReticle: false, projection: "AIT", cooFrame: 'icrs', target: "stephan's quintet", fov: 1000, showGotoControl: false, showFrame: true, showLayersControl: true, showCooGridControl: false});
+	aladin.showHealpixGrid(true);
+        const chft = aladin.createImageSurvey('CFHT', "CFHT deep view of NGC7331 and Stephan's quintet u+g+r", "https://cds.unistra.fr/~derriere/PR_HiPS/2022_Duc/", null, null, {imgFormat: 'png'});
+        const nircamJWST = aladin.createImageSurvey('Nircam', "Stephans Quintet NIRCam+MIRI", "http://alasky.cds.unistra.fr/JWST/CDS_P_JWST_Stephans-Quintet_NIRCam+MIRI/", null, null, {imgFormat: 'png', colormap: "viridis"});
+        
+        aladin.setOverlayImageLayer("CFHT", "CFHT");
+        aladin.setOverlayImageLayer("Nircam", "Nircam");
+
+        aladin.getOverlayImageLayer("CFHT").toggle();
+        aladin.getOverlayImageLayer("Nircam").toggle();
+
+        let fov = 360;
+        let rotation = 0;
+
+        setInterval(function zoom() {
+            if (fov > 0.07) {
+                fov *= 0.997;
+                rotation += 0.07;
+
+                aladin.setViewCenter2NorthPoleAngle(rotation)
+                aladin.setFoV(fov);
+
+                if (fov < 3 && fov > 0.5) {
+                    let opacity = 1.0 - (fov - 0.5)/(3 - 0.5); 
+                    aladin.getOverlayImageLayer("CFHT").setOpacity(opacity);
+                }
+
+                if (fov < 0.5 && fov > 0.1) {
+                    let opacity = 1.0 - (fov - 0.1)/(0.5 - 0.1); 
+                    aladin.getOverlayImageLayer("Nircam").setOpacity(opacity);
+                }
+            }
+        }, 10);
+
+        setInterval(function () {
+            const t = Date.now() / 1000;
+            let lambda = Math.sin(t) * 0.5 + 0.5;
+        })
+    });
+</script>
+
+</body>
+</html>
