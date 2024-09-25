@@ -3,3 +3,4 @@ jupyterlab-rise
 ipyaladin
 astroquery
 astropy
+matplotlib
